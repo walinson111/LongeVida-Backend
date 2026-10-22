@@ -1,0 +1,14 @@
+# Perfil usado SOMENTE nos testes automatizados.
+# O banco vem do Testcontainers (@ServiceConnection); a senha abaixo é só para satisfazer o placeholder.
+spring:
+  datasource:
+    password: definida-pelo-testcontainers
+app:
+  jwt:
+    secret: c2VncmVkby1TT01FTlRFLXBhcmEtdGVzdGVzLWF1dG9tYXRpemFkb3MtMDEyMzQ1Njc4OQ==     # valor descartável, exclusivo dos testes
+    expiration-minutes: 60
+  scheduler:
+    enabled: false
+  password-reset:
+    expiration-minutes: 15
+    max-attempts: 3

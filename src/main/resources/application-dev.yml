@@ -1,0 +1,6 @@
+# Perfil de desenvolvimento local (SPRING_PROFILES_ACTIVE=dev).
+# NÃO usar em produção: o código de recuperação de senha é escrito no log
+# quando o envio de e-mail está desativado.
+app:
+  mail:
+    log-codigo: true
