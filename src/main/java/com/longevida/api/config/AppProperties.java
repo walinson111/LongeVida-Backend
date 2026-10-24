@@ -3,7 +3,7 @@ package com.longevida.api.config;
 import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-/** Propriedades "app.*" do application.yml, tipadas. */
+
 @ConfigurationProperties(prefix = "app")
 public record AppProperties(
         String timezone,

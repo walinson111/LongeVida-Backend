@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class AppConfig {
 
-    /** Relógio único da aplicação (fuso configurável; facilita testes). */
+
     @Bean
     public Clock clock(AppProperties props) {
         return Clock.system(ZoneId.of(props.timezone()));

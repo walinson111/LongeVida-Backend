@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Resumo diário, histórico, progresso (gráficos), peso e água. */
+
 @RestController
 @RequestMapping("/api")
 public class ProgressoController {

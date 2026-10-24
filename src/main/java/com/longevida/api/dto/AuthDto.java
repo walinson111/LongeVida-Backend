@@ -1,5 +1,6 @@
 package com.longevida.api.dto;
 
+import com.longevida.api.validation.SenhaForte;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -22,7 +23,7 @@ public final class AuthDto {
     public record CadastroRequest(
             @NotBlank(message = "Informe o nome.") @Size(min = 2, max = 120, message = "O nome deve ter entre 2 e 120 caracteres.") String nome,
             @NotBlank(message = "Informe o e-mail.") @Email(message = "E-mail inválido.") @Size(max = 160, message = "E-mail muito longo.") String email,
-            @NotBlank(message = "Informe a senha.") @Size(min = 8, max = 64, message = "A senha deve ter entre 8 e 64 caracteres.") String senha,
+            @NotBlank(message = "Informe a senha.") @SenhaForte String senha,
             @NotNull(message = "Informe a idade.") @Min(value = 1, message = "Idade inválida.") @Max(value = 120, message = "Idade inválida.") Integer idade,
             @Valid PerfilProfissionalCadastro perfilProfissional) {}
 
@@ -38,7 +39,7 @@ public final class AuthDto {
     public record RedefinirSenhaRequest(
             @NotBlank(message = "Informe o e-mail.") @Email(message = "E-mail inválido.") String email,
             @NotBlank(message = "Informe o código.") @Pattern(regexp = "\\d{6}", message = "O código tem 6 dígitos.") String codigo,
-            @NotBlank(message = "Informe a nova senha.") @Size(min = 8, max = 64, message = "A senha deve ter entre 8 e 64 caracteres.") String novaSenha) {}
+            @NotBlank(message = "Informe a nova senha.") @SenhaForte String novaSenha) {}
 
     public record MensagemResposta(String mensagem) {}
 }

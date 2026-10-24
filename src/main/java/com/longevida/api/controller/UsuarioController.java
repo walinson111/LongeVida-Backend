@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Dados do próprio usuário autenticado. Não há rotas com id de usuário: ninguém acessa dados de terceiros. */
+
 @RestController
 @RequestMapping("/api/usuarios/me")
 public class UsuarioController {

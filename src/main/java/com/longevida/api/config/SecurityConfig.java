@@ -32,12 +32,12 @@ public class SecurityConfig {
                                                    JwtService jwtService,
                                                    UsuarioRepository usuarioRepository,
                                                    ObjectMapper objectMapper) throws Exception {
-        // O filtro NÃO é um bean de propósito: assim o Spring Boot não o registra duas vezes.
+      
         JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtService, usuarioRepository);
 
         http
-                .csrf(AbstractHttpConfigurer::disable)   // API stateless com token no cabeçalho
-                .cors(cors -> { })                        // usa o CorsConfigurationSource abaixo
+                .csrf(AbstractHttpConfigurer::disable)   
+                .cors(cors -> { })                        
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()

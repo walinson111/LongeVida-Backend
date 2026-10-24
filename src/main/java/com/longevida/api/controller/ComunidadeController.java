@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Conteúdo público: profissionais, seguidores e importação de dietas/treinos publicados. */
+
 @RestController
 @RequestMapping("/api/comunidade")
 public class ComunidadeController {

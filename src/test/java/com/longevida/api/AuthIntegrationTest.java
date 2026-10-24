@@ -22,7 +22,7 @@ class AuthIntegrationTest extends IntegrationTestBase {
         String email = emailUnico();
         MvcResult cadastro = executar("POST", "/api/auth/cadastro", null,
                 """
-                {"nome":"Maria Silva","email":"%s","senha":"senha-forte-123","idade":65}
+                {"nome":"Maria Silva","email":"%s","senha":"Senha-Forte-123","idade":65}
                 """.formatted(email.toUpperCase()));
         assertThat(cadastro.getResponse().getStatus()).isEqualTo(201);
         assertThat(corpo(cadastro).get("token").asText()).isNotBlank();
@@ -30,7 +30,7 @@ class AuthIntegrationTest extends IntegrationTestBase {
 
         MvcResult login = executar("POST", "/api/auth/login", null,
                 """
-                {"email":"%s","senha":"senha-forte-123"}
+                {"email":"%s","senha":"Senha-Forte-123"}
                 """.formatted(email));
         assertThat(login.getResponse().getStatus()).isEqualTo(200);
         String token = corpo(login).get("token").asText();
@@ -40,7 +40,6 @@ class AuthIntegrationTest extends IntegrationTestBase {
         assertThat(corpo(me).get("nome").asText()).isEqualTo("Maria Silva");
         assertThat(corpo(me).get("isProfissional").asBoolean()).isFalse();
         assertThat(corpo(me).get("perfilSaudeCompleto").asBoolean()).isFalse();
-        // a senha nunca aparece na resposta
         assertThat(me.getResponse().getContentAsString()).doesNotContain("senha").doesNotContain("$2a$");
     }
 
@@ -50,7 +49,7 @@ class AuthIntegrationTest extends IntegrationTestBase {
         cadastrar("Ana", email);
         MvcResult segundo = executar("POST", "/api/auth/cadastro", null,
                 """
-                {"nome":"Outra","email":"%s","senha":"senha-forte-123","idade":30}
+                {"nome":"Outra","email":"%s","senha":"Senha-Forte-123","idade":30}
                 """.formatted(email));
         assertThat(segundo.getResponse().getStatus()).isEqualTo(409);
     }
@@ -64,15 +63,23 @@ class AuthIntegrationTest extends IntegrationTestBase {
         assertThat(senhaCurta.getResponse().getStatus()).isEqualTo(400);
         assertThat(corpo(senhaCurta).get("campos").has("senha")).isTrue();
 
+        MvcResult senhaFraca = executar("POST", "/api/auth/cadastro", null,
+                """
+                {"nome":"Ana","email":"%s","senha":"senhafraca","idade":30}
+                """.formatted(emailUnico()));
+        assertThat(senhaFraca.getResponse().getStatus()).isEqualTo(400);
+        assertThat(corpo(senhaFraca).get("campos").get("senha").asText())
+                .contains("letra maiúscula").contains("número").contains("caractere especial");
+
         MvcResult emailRuim = executar("POST", "/api/auth/cadastro", null,
                 """
-                {"nome":"Ana","email":"nao-e-email","senha":"senha-forte-123","idade":30}
+                {"nome":"Ana","email":"nao-e-email","senha":"Senha-Forte-123","idade":30}
                 """);
         assertThat(emailRuim.getResponse().getStatus()).isEqualTo(400);
 
         MvcResult idadeRuim = executar("POST", "/api/auth/cadastro", null,
                 """
-                {"nome":"Ana","email":"%s","senha":"senha-forte-123","idade":300}
+                {"nome":"Ana","email":"%s","senha":"Senha-Forte-123","idade":300}
                 """.formatted(emailUnico()));
         assertThat(idadeRuim.getResponse().getStatus()).isEqualTo(400);
     }
@@ -112,7 +119,7 @@ class AuthIntegrationTest extends IntegrationTestBase {
         String email = emailUnico();
         String tokenAntigo = cadastrar("Ana", email);
 
-        // E-mail inexistente responde igual (não revela quem tem conta).
+      
         MvcResult inexistente = executar("POST", "/api/auth/esqueci-senha", null,
                 """
                 {"email":"%s"}
@@ -134,31 +141,30 @@ class AuthIntegrationTest extends IntegrationTestBase {
         String errado = codigoCorreto.equals("000000") ? "111111" : "000000";
         MvcResult codigoErrado = executar("POST", "/api/auth/redefinir-senha", null,
                 """
-                {"email":"%s","codigo":"%s","novaSenha":"nova-senha-456"}
+                {"email":"%s","codigo":"%s","novaSenha":"Nova-Senha-456"}
                 """.formatted(email, errado));
         assertThat(codigoErrado.getResponse().getStatus()).isEqualTo(422);
 
         MvcResult ok = executar("POST", "/api/auth/redefinir-senha", null,
                 """
-                {"email":"%s","codigo":"%s","novaSenha":"nova-senha-456"}
+                {"email":"%s","codigo":"%s","novaSenha":"Nova-Senha-456"}
                 """.formatted(email, codigoCorreto));
         assertThat(ok.getResponse().getStatus()).isEqualTo(200);
 
-        // O código não pode ser reutilizado.
         MvcResult reuso = executar("POST", "/api/auth/redefinir-senha", null,
                 """
-                {"email":"%s","codigo":"%s","novaSenha":"outra-senha-789"}
+                {"email":"%s","codigo":"%s","novaSenha":"Outra-Senha-789"}
                 """.formatted(email, codigoCorreto));
         assertThat(reuso.getResponse().getStatus()).isEqualTo(422);
 
-        // Senha antiga não entra mais; a nova sim; tokens antigos foram invalidados.
+       
         assertThat(executar("POST", "/api/auth/login", null,
                 """
-                {"email":"%s","senha":"senha-forte-123"}
+                {"email":"%s","senha":"Senha-Forte-123"}
                 """.formatted(email)).getResponse().getStatus()).isEqualTo(401);
         assertThat(executar("POST", "/api/auth/login", null,
                 """
-                {"email":"%s","senha":"nova-senha-456"}
+                {"email":"%s","senha":"Nova-Senha-456"}
                 """.formatted(email)).getResponse().getStatus()).isEqualTo(200);
         assertThat(executar("GET", "/api/usuarios/me", tokenAntigo, null).getResponse().getStatus()).isEqualTo(401);
     }
@@ -177,16 +183,16 @@ class AuthIntegrationTest extends IntegrationTestBase {
         String certo = codigo.getValue();
         String errado = certo.equals("000000") ? "111111" : "000000";
 
-        // application-test.yml: max-attempts = 3
+     
         for (int i = 0; i < 3; i++) {
             executar("POST", "/api/auth/redefinir-senha", null,
                     """
-                    {"email":"%s","codigo":"%s","novaSenha":"nova-senha-456"}
+                    {"email":"%s","codigo":"%s","novaSenha":"Nova-Senha-456"}
                     """.formatted(email, errado));
         }
         MvcResult comCodigoCerto = executar("POST", "/api/auth/redefinir-senha", null,
                 """
-                {"email":"%s","codigo":"%s","novaSenha":"nova-senha-456"}
+                {"email":"%s","codigo":"%s","novaSenha":"Nova-Senha-456"}
                 """.formatted(email, certo));
         assertThat(comCodigoCerto.getResponse().getStatus()).isEqualTo(422);
     }

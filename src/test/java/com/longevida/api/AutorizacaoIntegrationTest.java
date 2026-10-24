@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
 
-/** Garante que um usuário não lê, altera nem apaga dados de outro. */
 class AutorizacaoIntegrationTest extends IntegrationTestBase {
 
     private static final String DIETA = """
@@ -24,14 +23,14 @@ class AutorizacaoIntegrationTest extends IntegrationTestBase {
 
         String caminho = "/api/dietas/" + id;
         assertThat(executar("GET", caminho, ana, null).getResponse().getStatus()).isEqualTo(200);
-        // 404 (e não 403): nem revela que o recurso existe.
+       
         assertThat(executar("GET", caminho, beto, null).getResponse().getStatus()).isEqualTo(404);
         assertThat(executar("PUT", caminho, beto, DIETA).getResponse().getStatus()).isEqualTo(404);
         assertThat(executar("DELETE", caminho, beto, null).getResponse().getStatus()).isEqualTo(404);
         assertThat(executar("POST", caminho + "/publicar", beto, null).getResponse().getStatus()).isEqualTo(404);
         assertThat(corpo(executar("GET", "/api/dietas", beto, null)).size()).isZero();
 
-        // A dieta de Ana continua intacta.
+        
         assertThat(executar("GET", caminho, ana, null).getResponse().getStatus()).isEqualTo(200);
     }
 
@@ -124,11 +123,11 @@ class AutorizacaoIntegrationTest extends IntegrationTestBase {
                 {"nome":"Mediterrânea","descricao":"D","calorias":1900,"publicar":true}
                 """));
 
-        // Dieta privada de outro usuário não é visível nem importável.
+       
         assertThat(executar("GET", "/api/comunidade/dietas/" + privada, maria, null).getResponse().getStatus()).isEqualTo(404);
         assertThat(executar("POST", "/api/comunidade/dietas/" + privada + "/importar", maria, null).getResponse().getStatus()).isEqualTo(404);
 
-        // A publicada é visível e importável.
+       
         MvcResult detalhe = executar("GET", "/api/comunidade/dietas/" + publicada, maria, null);
         assertThat(detalhe.getResponse().getStatus()).isEqualTo(200);
         assertThat(corpo(detalhe).get("autor").get("nome").asText()).isEqualTo("Dr. João");
@@ -139,7 +138,7 @@ class AutorizacaoIntegrationTest extends IntegrationTestBase {
         assertThat(corpo(copia).get("creditoNome").asText()).isEqualTo("Dr. João");
         long copiaId = idDe(copia);
         assertThat(executar("GET", "/api/dietas/" + copiaId, maria, null).getResponse().getStatus()).isEqualTo(200);
-        // A cópia é de Maria: o doutor não a enxerga.
+        
         assertThat(executar("GET", "/api/dietas/" + copiaId, doutor, null).getResponse().getStatus()).isEqualTo(404);
     }
 
@@ -156,7 +155,7 @@ class AutorizacaoIntegrationTest extends IntegrationTestBase {
         assertThat(seguiu.getResponse().getStatus()).isEqualTo(200);
         assertThat(corpo(seguiu).get("seguidores").asLong()).isEqualTo(1);
         assertThat(corpo(seguiu).get("seguindo").asBoolean()).isTrue();
-        // repetir não duplica
+       
         assertThat(corpo(executar("POST", "/api/comunidade/profissionais/" + perfilId + "/seguir", maria, null))
                 .get("seguidores").asLong()).isEqualTo(1);
 

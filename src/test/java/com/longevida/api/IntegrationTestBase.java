@@ -17,10 +17,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-/**
- * Base dos testes de integração: sobe a API inteira contra um PostgreSQL real (Docker).
- * Sem Docker disponível, estes testes são ignorados (disabledWithoutDocker).
- */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -66,18 +62,17 @@ public abstract class IntegrationTestBase {
         return json.readTree(r.getResponse().getContentAsString());
     }
 
-    /** Cadastra um usuário comum e devolve o token. */
+   
     protected String cadastrar(String nome, String email) throws Exception {
         String body = """
-                {"nome":"%s","email":"%s","senha":"senha-forte-123","idade":65}
+                {"nome":"%s","email":"%s","senha":"Senha-Forte-123","idade":65}
                 """.formatted(nome, email);
         return corpo(executar("POST", "/api/auth/cadastro", null, body)).get("token").asText();
     }
 
-    /** Cadastra um profissional de saúde e devolve o token. */
     protected String cadastrarProfissional(String nome, String email) throws Exception {
         String body = """
-                {"nome":"%s","email":"%s","senha":"senha-forte-123","idade":40,
+                {"nome":"%s","email":"%s","senha":"Senha-Forte-123","idade":40,
                  "perfilProfissional":{"especialidade":"Nutricionista","registro":"CRN-12345","descricao":"Teste"}}
                 """.formatted(nome, email);
         return corpo(executar("POST", "/api/auth/cadastro", null, body)).get("token").asText();

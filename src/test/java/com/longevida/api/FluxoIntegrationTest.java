@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
 
-/** Fluxo principal do app: perfil de saúde, refeições, treinos, atividades, resumo e progresso. */
+
 class FluxoIntegrationTest extends IntegrationTestBase {
 
     private long alimentoId(String token, String nome) throws Exception {
@@ -45,7 +45,7 @@ class FluxoIntegrationTest extends IntegrationTestBase {
         assertThat(progresso.get("pesos")).hasSize(1);
         assertThat(progresso.get("resumoCorporal").get("imc").asDouble()).isEqualTo(27.1);
 
-        // validação de faixa
+       
         assertThat(executar("PUT", "/api/usuarios/me", token,
                 """
                 {"nome":"Maria","idade":65,"peso":900,"altura":165,"nivelAtividade":"MODERADO"}
@@ -99,7 +99,7 @@ class FluxoIntegrationTest extends IntegrationTestBase {
         assertThat(corpo(editado).get("exercicios")).hasSize(1);
         assertThat(corpo(executar("GET", "/api/treinos/" + id, token, null)).get("exercicios")).hasSize(1);
 
-        // séries 0 é inválido
+        
         assertThat(executar("POST", "/api/treinos", token,
                 """
                 {"nome":"X","objetivo":"Y","nivel":"INICIANTE","exercicios":[{"nome":"A","series":0,"repeticoes":5}]}
@@ -110,7 +110,7 @@ class FluxoIntegrationTest extends IntegrationTestBase {
     void refeicaoAtividadeResumoHistoricoEProgresso() throws Exception {
         String token = cadastrar("Maria", emailUnico());
 
-        // Refeição: 200 g de arroz (260 kcal) + 20 ml de azeite (176 kcal) = 436 kcal
+        
         long arroz = alimentoId(token, "Arroz Branco");
         long azeite = alimentoId(token, "Azeite");
         MvcResult refeicao = executar("POST", "/api/refeicoes", token,
@@ -121,7 +121,7 @@ class FluxoIntegrationTest extends IntegrationTestBase {
         assertThat(refeicao.getResponse().getStatus()).isEqualTo(201);
         assertThat(corpo(refeicao).get("totais").get("calorias").asInt()).isEqualTo(436);
 
-        // Treino + atividade: 2 de 3 exercícios concluídos => 100 kcal (50 por exercício)
+       
         MvcResult treino = executar("POST", "/api/treinos", token,
                 """
                 {"nome":"Caminhada","objetivo":"Cardio","nivel":"INICIANTE","exercicios":[

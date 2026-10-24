@@ -7,7 +7,6 @@ import com.longevida.api.entity.RefeicaoItem;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 
-/** Cálculo nutricional proporcional à porção de referência. */
 class RefeicaoCalculoTest {
 
     private static Alimento alimento(String nome, String porcao, String unidade, String kcal, String p, String c, String g) {
@@ -47,7 +46,7 @@ class RefeicaoCalculoTest {
 
     @Test
     void azeiteDe10mlUsaAPorcaoCorreta() {
-        // No protótipo (frontend) este caso era calculado dividindo por 200 por engano.
+
         Alimento azeite = alimento("Azeite", "10", "ml", "88", "0.0", "0.0", "10.0");
 
         RefeicaoItem item = RefeicaoService.calcularItem(azeite, new BigDecimal("20"));
